@@ -97,32 +97,4 @@ python experiments/exp_repeated_sizes.py --repeat-indices 1 2 3
 python experiments/exp_repeated_sizes.py --source-results-path output/merged/raw_repeat_results.csv
 ```
 
-## Size Definitions
 
-The size experiment follows the original size-reporting definitions and adds the missing FCALC definitions:
-
-- `FCALC`: `n_train * n_features`.
-- `FCALC(rand.)`: `n_classes * num_iters * n_features`, where `num_iters` is the selected randomized-FCALC hyperparameter.
-- `IPS-KNN`: refit with selected `k`, then report average and maximum reduced reason for classification size over the test split.
-- `k-NN`: `n_features * n_neighbors`.
-- `Naive Bayes`: `4 * n_features + 2`.
-- `Logistic Regression`: `n_features + 1`.
-- `SVM`: linear kernel uses `n_features + 1`; non-linear kernels are refit and reported as `n_features * n_support_vectors + n_support_vectors + 2`.
-- `Decision Tree`: refit with selected hyperparameters, then report average and maximum number of unique features along test-sample decision paths.
-- `Random Forest`: report selected `n_estimators` and max depth. If selected `max_depth=None`, refit and report the observed maximum depth across fitted trees.
-- `XGBoost`: report selected `n_estimators` and `max_depth`.
-
-For IPS-KNN compactness, `compactness.csv` reports:
-
-- mean average reduced reason size across repeats;
-- maximum reduced reason size observed across repeats;
-- mean reduced-reason/classification-reason ratio, computed per repeat and then averaged.
-
-## Repository Cleanup
-
-Legacy single-split experiment scripts and their old text outputs were removed. The active experiment entry points are only:
-
-```text
-experiments/exp_repeated_macro_f1.py
-experiments/exp_repeated_sizes.py
-```
