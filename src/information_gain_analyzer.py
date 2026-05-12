@@ -10,9 +10,7 @@ class InformationGainAnalyzer:
     def find_entropy(y: pd.Series) -> float:
         _, counts = np.unique(y, return_counts=True)
         probalbilities = counts / len(y)
-        return -np.sum(
-            probalbilities * np.log2(probalbilities, where=(probalbilities != 0))
-        )
+        return -np.sum(probalbilities * np.log2(probalbilities))
 
     def find_informatio_gain(
         parent_entropy: float, left_branch: pd.Series, right_branch: pd.Series

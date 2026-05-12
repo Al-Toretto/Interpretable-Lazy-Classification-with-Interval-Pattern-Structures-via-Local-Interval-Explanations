@@ -1,0 +1,13 @@
+dataset,mean_avg_rrc_size,max_max_rrc_size,mean_rrc_rc_ratio,successful_repeats
+wine,7.315,11.0,0.665,10
+breast_cancer,5.058772,18.0,0.168626,10
+rice,4.095932,7.0,0.585133,10
+sonar,4.607143,9.0,0.076786,10
+parkinsons,3.412821,16.0,0.155128,10
+spam,28.035288,57.0,0.491847,10
+glass,4.683721,9.0,0.520413,10
+ionosphere,7.398592,29.0,0.217606,10
+page_blocks,5.360091,10.0,0.536009,10
+waveform,12.9749,21.0,0.617852,10
+vehicle,6.010588,16.0,0.333922,10
+image_segmentation,4.7189,18.0,0.262161,10

@@ -1,4 +1,0 @@
-,Accuracy,F1 score,Unclassified,time (sec.)
-proximity,0.9288,0.6563,0.0,1025.4
-proximity-non-falsified,0.9388,0.5236,0.0046,1320.75
-proximity-support,0.9279,0.3389,0.0046,1277.95

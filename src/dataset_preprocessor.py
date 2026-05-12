@@ -115,6 +115,12 @@ class DatasetPreprocessor:
     def _preprocess_waveform(self):
         pass
 
+    def _preprocess_vehicle(self):
+        pass
+
+    def _preprocess_image_segmentation(self):
+        pass
+
     def __init__(self, dataset:Dataset):
         self.standardization_scaler = None
         self.dataset = dataset
@@ -130,6 +136,8 @@ class DatasetPreprocessor:
             "ionosphere": self._preprocess_ionosphere,
             "page_blocks": self._preprocess_page_blocks,
             "waveform": self._preprocess_waveform,
+            "vehicle": self._preprocess_vehicle,
+            "image_segmentation": self._preprocess_image_segmentation,
         }
 
     def _load_data(self):
@@ -198,8 +206,9 @@ class DatasetPreprocessor:
             raise ValueError(
                 "Standardization scaler is not initialized. Please call standardize() first."
             )
-        df_min = df.applymap(lambda x: x[0])
-        df_max = df.applymap(lambda x: x[1])
+        map_values = df.map if hasattr(df, "map") else df.applymap
+        df_min = map_values(lambda x: x[0])
+        df_max = map_values(lambda x: x[1])
         destandardized_df_min = pd.DataFrame(
             self.standardization_scaler.inverse_transform(df_min),
             columns=df_min.columns,

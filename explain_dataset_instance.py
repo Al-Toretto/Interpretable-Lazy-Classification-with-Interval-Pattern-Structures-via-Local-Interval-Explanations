@@ -41,6 +41,23 @@ def format_feature_ranges(df: pd.DataFrame) -> str:
     )
 
 
+def format_explanation_metadata(metadata: dict) -> str:
+    return "\n".join(
+        [
+            f"k: {metadata['k']}",
+            f"supporter_label: {metadata['predicted_label']}",
+            f"opposer_label: {metadata['opposer_label']}",
+            f"supporter_count: {metadata['supporter_count']}",
+            f"opposer_count: {metadata['opposer_count']}",
+            f"original_supporter_score: {metadata['original_supporter_score']}",
+            f"original_opposer_score: {metadata['original_opposer_score']}",
+            f"taken_supporter_count: {metadata['taken_supporter_count']}",
+            f"taken_supporter_score: {metadata['taken_supporter_score']}",
+            f"taken_supporter_indices: {metadata['taken_supporter_indices']}",
+        ]
+    )
+
+
 def filter_reduced_reason(
     reason: pd.Series, reduced_reason: pd.Series
 ) -> pd.Series:
@@ -70,6 +87,9 @@ def main(dataset_name: str, sample_id: int) -> None:
 
     sample_standardized = dataset.X_test.loc[[sample_id]]
     sample_original = preprocessor.destandardize_df(sample_standardized)
+    explanation_metadata = classifier.find_explanation_metadata_for_one_sample(
+        sample_standardized.loc[sample_id]
+    )
 
     (
         y_pred,
@@ -101,6 +121,8 @@ def main(dataset_name: str, sample_id: int) -> None:
     print(f"correct_class: {correct_class}")
     print(f"reason_size: {len(reason)}")
     print(f"reduced_reason_size: {len(reduced_reason)}")
+    print("\nclassification_vote_context:")
+    print(format_explanation_metadata(explanation_metadata))
     print("\noriginal_feature_values:")
     print(format_series(sample_original.loc[sample_id]))
     print("\nfull_feature_ranges:")

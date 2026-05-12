@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 import pandas as pd
 import functools
@@ -114,6 +116,13 @@ class IPSKNNClassifier:
         self.X_train = X_train
         self.y_train = y_train
 
+    def _find_vote_score_for_distance(self, distance: float) -> float:
+        if self.weights == "uniform":
+            return 1
+        if self.weights == "distance":
+            return 1 / distance if distance != 0 else 10000
+        raise ValueError(f"Unknown weights value: {self.weights}")
+
     def _find_votes_for_one_sample(
         self, sample: pd.Series
     ) -> Tuple[Dict[Any, float], pd.Series, pd.Series]:
@@ -129,12 +138,12 @@ class IPSKNNClassifier:
         elif self.weights == "distance":
             for index, label in supporting_samples_labels.items():
                 if label in votes:
-                    votes[label] += (
-                        (1 / distances[index]) if distances[index] != 0 else 10000
+                    votes[label] += self._find_vote_score_for_distance(
+                        distances[index]
                     )
                 else:
-                    votes[label] = (
-                        (1 / distances[index]) if distances[index] != 0 else 10000
+                    votes[label] = self._find_vote_score_for_distance(
+                        distances[index]
                     )
         return votes, distances, mask
 
@@ -149,7 +158,7 @@ class IPSKNNClassifier:
         return max_label
 
     def predict(self, X_test: pd.DataFrame) -> pd.Series:
-        y_pred = pd.Series(data=np.nan, index=X_test.index)
+        y_pred = pd.Series(data=np.nan, index=X_test.index, dtype=object)
         for index, sample in X_test.iterrows():
             y_pred[index] = self._predict_one_sample(sample)
         return y_pred
@@ -178,17 +187,40 @@ class IPSKNNClassifier:
     ]:
         reason_for_classification = None
 
+        (
+            largest_label,
+            reason_for_classification,
+            _,
+        ) = self._predict_with_explanation_one_sample_with_metadata(sample)
+
+        return (
+            largest_label,
+            reason_for_classification,
+        )
+
+    def _predict_with_explanation_one_sample_with_metadata(
+        self,
+        sample: pd.Series,
+    ) -> Tuple[
+        Any,
+        Dict[Any, Tuple[float, float]],
+        Dict[str, Any],
+    ]:
         votes, distances, mask = self._find_votes_for_one_sample(sample)
 
         sorted_votes_list = sorted(
             votes.items(), key=lambda item: item[1], reverse=True
         )
         largest_label = sorted_votes_list[0][0]
+        largest_score = sorted_votes_list[0][1]
+        second_largest_label = None
         second_largest_score = 0
         if len(sorted_votes_list) > 1:
+            second_largest_label = sorted_votes_list[1][0]
             second_largest_score = sorted_votes_list[1][1]
 
         mask_voters_with_largest_label = mask & (self.y_train == largest_label)
+        mask_voters_with_other_labels = mask & (self.y_train != largest_label)
         distances_supporting_samples_with_largest_label = distances[
             mask_voters_with_largest_label
         ]
@@ -199,13 +231,7 @@ class IPSKNNClassifier:
             dist_index,
             dist_value,
         ) in distances_supporting_samples_with_largest_label.items():
-            explanation_score += (
-                1
-                if self.weights == "uniform"
-                else 1 / dist_value
-                if dist_value != 0
-                else 10000
-            )
+            explanation_score += self._find_vote_score_for_distance(dist_value)
             explanation_indices.append(dist_index)
             if explanation_score >= second_largest_score:
                 break
@@ -223,7 +249,27 @@ class IPSKNNClassifier:
         return (
             largest_label,
             reason_for_classification,
+            {
+                "k": self.k,
+                "predicted_label": largest_label,
+                "opposer_label": second_largest_label,
+                "supporter_count": int(mask_voters_with_largest_label.sum()),
+                "opposer_count": int(mask_voters_with_other_labels.sum()),
+                "original_supporter_score": largest_score,
+                "original_opposer_score": second_largest_score,
+                "taken_supporter_count": len(explanation_indices),
+                "taken_supporter_score": explanation_score,
+                "taken_supporter_indices": explanation_indices,
+            },
         )
+
+    def find_explanation_metadata_for_one_sample(
+        self, sample: pd.Series
+    ) -> Dict[str, Any]:
+        _, _, metadata = self._predict_with_explanation_one_sample_with_metadata(
+            sample
+        )
+        return metadata
 
     def _predict_with_explanation(
         self,
@@ -237,7 +283,7 @@ class IPSKNNClassifier:
         pd.DataFrame,
         pd.DataFrame,
     ]:
-        y_pred = pd.Series(data=np.nan, index=X_test.index)
+        y_pred = pd.Series(data=np.nan, index=X_test.index, dtype=object)
 
         reason_for_classification_dict = {}
         reduced_reason_for_classification_dict = {}

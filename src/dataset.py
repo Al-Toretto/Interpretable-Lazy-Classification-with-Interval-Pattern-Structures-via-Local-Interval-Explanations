@@ -19,6 +19,8 @@ known_datasets = [
     "ionosphere",
     "page_blocks",
     "waveform",
+    "vehicle",
+    "image_segmentation",
 ]
 
 paths_to_datasets = {
@@ -33,6 +35,8 @@ paths_to_datasets = {
     "ionosphere": os.path.join(project_root, "datasets", "ionosphere.data"),
     "page_blocks": os.path.join(project_root, "datasets", "page-blocks.data"),
     "waveform": os.path.join(project_root, "datasets", "waveform.data"),
+    "vehicle": os.path.join(project_root, "datasets", "vehicle.csv"),
+    "image_segmentation": os.path.join(project_root, "datasets", "image_segmentation.csv"),
 }
 
 dataset_positive_labels = {
@@ -47,6 +51,8 @@ dataset_positive_labels = {
     "ionosphere": 'g',
     "page_blocks": 1,
     "waveform": 1,
+    "vehicle": "bus",
+    "image_segmentation": 1,
 }
 dataset_class_column_names = {
     "wine": "quality",
@@ -60,6 +66,8 @@ dataset_class_column_names = {
     "ionosphere": "class",
     "page_blocks": "class",
     "waveform": "class",
+    "vehicle": "class",
+    "image_segmentation": "class",
 }
 
 

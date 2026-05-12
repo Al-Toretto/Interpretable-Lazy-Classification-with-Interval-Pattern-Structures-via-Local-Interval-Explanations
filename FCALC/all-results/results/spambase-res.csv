@@ -1,4 +1,0 @@
-,Accuracy,F1 score,Unclassified,time (sec.)
-standard,0.6145,0.6046,0.0,1747.3
-standard-support,0.7307,0.7303,0.0,1744.43
-ratio-support,0.8382,0.829,0.0,1724.76
