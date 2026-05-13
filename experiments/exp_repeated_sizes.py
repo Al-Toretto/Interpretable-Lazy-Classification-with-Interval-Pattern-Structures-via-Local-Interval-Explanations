@@ -28,7 +28,9 @@ from src.ips_knn_classifier import IPSKNNClassifier  # noqa: E402
 
 
 OUTPUT_DIR = PROJECT_ROOT / "output" / "repeated_sizes"
-DEFAULT_SOURCE_RESULTS_PATH = PROJECT_ROOT / "output" / "merged" / "raw_repeat_results.csv"
+DEFAULT_SOURCE_RESULTS_PATH = (
+    PROJECT_ROOT / "output" / "repeated_macro_f1" / "raw_repeat_results.csv"
+)
 RAW_SIZES_PATH = OUTPUT_DIR / "raw_repeat_sizes.csv"
 SUMMARY_PATH = OUTPUT_DIR / "summary.csv"
 COMPACTNESS_PATH = OUTPUT_DIR / "compactness.csv"

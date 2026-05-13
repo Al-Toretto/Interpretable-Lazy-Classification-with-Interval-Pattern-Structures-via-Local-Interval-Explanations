@@ -1,5 +1,5 @@
 Repeated splits used: R=10.
 95% CI formula: t_{0.975, R-1} * sample_std(scores, ddof=1) / sqrt(R), reported in percentage points.
-Successful dataset-classifier summaries: 98.
+Successful dataset-classifier summaries: 120.
 Failed raw runs: 0.
 Old single-split comparison: not computed automatically; inspect the new summary against the previous table.

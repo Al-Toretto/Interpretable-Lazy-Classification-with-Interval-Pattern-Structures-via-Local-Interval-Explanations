@@ -53,10 +53,10 @@ python experiments/exp_repeated_macro_f1.py --repeat-indices 1 2 3
 python experiments/exp_repeated_macro_f1.py --summary-only
 ```
 
-The merged final macro-F1 artifact used by the size experiment is:
+The final macro-F1 artifact used by the size experiment is:
 
 ```text
-output/merged/raw_repeat_results.csv
+output/repeated_macro_f1/raw_repeat_results.csv
 ```
 
 It contains the selected hyperparameters for every completed dataset-classifier-repeat row.
@@ -72,7 +72,7 @@ python experiments/exp_repeated_sizes.py
 By default, the size experiment reads selected hyperparameters from:
 
 ```text
-output/merged/raw_repeat_results.csv
+output/repeated_macro_f1/raw_repeat_results.csv
 ```
 
 and writes:
@@ -94,7 +94,6 @@ Useful options:
 python experiments/exp_repeated_sizes.py --datasets wine sonar
 python experiments/exp_repeated_sizes.py --classifiers ips_knn svm decision_tree
 python experiments/exp_repeated_sizes.py --repeat-indices 1 2 3
-python experiments/exp_repeated_sizes.py --source-results-path output/merged/raw_repeat_results.csv
+python experiments/exp_repeated_sizes.py --source-results-path output/repeated_macro_f1/raw_repeat_results.csv
 ```
-
 
